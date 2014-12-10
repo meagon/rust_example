@@ -29,7 +29,10 @@ enum   RStatus{
 
 // CRLFCRLF  13u810u813u810u8
 
-fn indexOf() -> Vec<uint> {
+fn indexOf(&this, element) -> Vec<uint> {
+    
+
+
 
     return vec![8u].to_vec();
 
@@ -49,6 +52,7 @@ fn main(){
     let mut z :Vec<u8> = Vec::new();
     let mut zz = Vec::new();
     let mut CRLFCRLF : Vec<uint> = Vec::new();
+    let mut cr_position  : Vec<uint> = Vec::new();
     loop {
         match it.next(){
             Some(&x) => {
@@ -57,11 +61,12 @@ fn main(){
                     state = RStatus::FoundNR;
                     //if body[count-3..count] == vec![13u8
                     if body[count-1] == 13u8 {
-                        println!("hahdahhdada{}", body[count-3..count+1]);
+                        println!("found element should be [13 10 13 10] {} ", body[count-3..count+1]);
                         if body[count-3..count+1] == vec![13u8,10,13,10].as_slice()  {
                             zz.push(z.clone());
                             z.clear();
                             CRLFCRLF.push(count);
+                            cr_position.push(count);
                         }
                     }
                 }

@@ -1,0 +1,70 @@
+
+#![feature(slicing_syntax)] 
+use std::collections::HashMap;
+
+fn skip(t: &Vec<u8>, hash: & mut HashMap<u8,uint> ) {
+    //v.reverse();
+    //let mut hash = HashMap::new();
+
+    let mut pos :u8 = 0;
+    for i in t.iter(){
+        hash.insert(*i as u8, t.len() - pos as uint -1);
+        pos +=1;
+    }
+}
+
+
+fn byyel(s :&Vec<u8>, t: &Vec<u8>) -> Option<uint>{
+
+    let n = s.len();
+    let m = t.len();
+
+    let mut r = n -m ;
+    let mut i = 0u;
+    let mut k :uint;
+
+    let mut hash :HashMap<u8,uint>= HashMap::new();
+    skip(t, & mut hash);
+
+    while ( i < n-m ){
+        debug!("i = {}",i);
+        debug!("at while loop..")
+        if (s[i+m-1] == t[m-1]){
+            if (s[i..i+m-1] == t[0..m-1]) {
+                return Some(i);
+            }
+            else if (t.get(s[i+m] as uint ) == None) {
+                debug!("at nop 1");
+                i = i+m -1;
+            }
+            else {
+                let mut element = t.get(s[i+m] as uint).unwrap();
+                let  skip= *hash.get( element ).unwrap() as uint;
+                i = i+ skip;
+            }
+            }
+       else{
+            debug!("...at else..and  s[i+m] = {}", s[i+m]);
+            if (t.get(s[i+m] as uint) == None ){
+                debug!("at nop 2");
+                i = i +m ;
+            }
+            else {
+                i = i+1;
+            }
+       }
+        debug!("{}",s[i..n]);
+        debug!("{}",t)
+        debug!("i ={}   and n-m = {}", i, n-m);
+   }
+   return None;
+}
+
+fn main(){
+
+    let mut s = vec![1u8,2,3,4,5,6,7,8,8,0,0];
+    let mut t = vec![8u8,8,0];   
+
+    let z =  byyel(&s,&t);
+    println!("{}",z);
+}

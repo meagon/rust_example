@@ -20,12 +20,6 @@ macro_rules! STRINGLIB_BLOOM(
     (mask:expr, $ch:expr) => ((mask & ( 1u64 << ((ch) & (64u -1 )))) >0 as bool)
 )
 
-///  macro_rules! utf8_first_byte(
-///      ($byte:expr, $width:expr) => (($byte & (0x7F >> $width)) as u32)
-///  )
-/// #define STRINGLIB_BLOOM_WIDTH 32
-
-
 
 fn stringlib_bloom_add(mask :&uint, ch :&u8 ) -> uint{
         let z= *mask | 1u << ((*ch as uint & (32-1)));
@@ -84,6 +78,7 @@ fn fastsearch( this :Vec<u8>, target : Vec<u8>,) -> Option<uint>{
                     if ( this[i] == target[0] ){
                         return Some(i);
                     }
+                    i+=1;
                 }
             }else {
                 i = n-1;
@@ -101,6 +96,7 @@ fn fastsearch( this :Vec<u8>, target : Vec<u8>,) -> Option<uint>{
         let mut skip = mlast -1;
         let mut mask = 0;
         let mut i :uint;
+        let mut j :uint;
         if (mode != FAST_RSEARCH) {
             i = 0;
             while (i < mlast){            
@@ -108,7 +104,6 @@ fn fastsearch( this :Vec<u8>, target : Vec<u8>,) -> Option<uint>{
                 if (target[i] == target[mlast]){
                     skip = mlast -i -1;
                 }
-
                 i += 1;
             }
             mask=stringlib_bloom_add(&mask, &target[mlast]);
@@ -197,9 +192,8 @@ fn main(){
 
 
     let a = vec![1u8,2,3,4,45,56,6,677,78,8,9];
-    let b = vec![8u8,9];
+    let b = vec![8u8,8];
     let z = fastsearch(a,b);
     println!(" found z at {}",z);
 }
-
 
