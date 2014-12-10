@@ -31,12 +31,18 @@ enum   RStatus{
     Nothing,
 }
 
+
+struct Input_obj {
+    header_map : HashMap<String,String>,
+    ret: Vec<u8>,
+};
+
+
+
+
 fn indexOf( s: &Vec<u8>, t:&Vec<u8>) -> Vec<uint> {
-    
     let mut ret = search::search::byyel(s, t, 0u);
     return ret;
-
-
 }
 
 fn main(){
@@ -62,11 +68,8 @@ fn main(){
             let (begin, end) = pos;
             let block = body[previous..begin];
             println!("at block ###");
-            
             println!("{}", String::from_utf8(block.to_vec()));
-
             println!("at block ###");
-
             previous = end;
             //println!("{}", [begin..end])
     }
@@ -79,15 +82,49 @@ fn main(){
 
 /*
     fn collectHeaders ( buf :&Vec<u8>) ->  Options<>{
-
+        let header_map = HashMap<String, String>;
+        let left :Vec<u8> = Vec::new();
         let CRLFCRLF = "\r\n\r\n".as_slice().to_vec();
         let pos = IndexOf(buf, &CRLFCRLF),
-        let (headerBytes, rest) = (buf[0..pos], buf[pos..]);
+        let (headerBytes, rest) = (buf[0..pos], buf[pos+4 ..]);
         let header = String::from_utf8( headerBytes).unwrap().trim();
+        let headers = header.split(header, &CRCF);
         if header.starts_with("--") || header.is_empty() {
-            return None;
+            // return None;
+        }
+        for item in headers.iter(){
+            if item.startswith("Content-Disposition") {
+                element = line.splitn(";");
+                for i in element.iter(){
+                    if  i.contains("="){
+                        pairs = i.splitn(1,"=");    
+                        k = pairs.next().unwrap();
+                        v = pairs.next().unwrap();
+                        header_map.insert(k,v);
+                    }
+                }
+            }
+            if item.starts_with("Content-Type"){
+                pairs = i.splitn(1, ":");
+                k = pairs.next().unwrap();
+                v = pairs.next().unwrap();
+                header_map.insert("type",v);
+            }
+        }
+        let left = reset.drop(CRLF);
+
+    let input_instance = Input_obj {
+        header_map: header_map,
+        ret : left;
+    }
+    return Some(header,left);
+}
+            
+
+        
         }
         else {
+
             let mut params = line.split(1, ":" );
             let mut field =  params.next().unwrap();
             let mut value = params.next().unwrap();

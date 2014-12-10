@@ -80,7 +80,7 @@ pub fn byyel(s :&Vec<u8>, t: &Vec<u8>, start:uint) -> Vec<uint>{
 
 fn main(){
 
-    let mut s = vec![1u8,2,3,4,5,6,7,8,8,8,4,0,4,0,8,8,0];
+    let mut s = vec![1u8,2,3,4,5,6,7,8,8,8,4,0,4,0,8,8,0,9,5,6,7,8,9,4,8,8,4,4,4,8,8,8,4,0,4];
     let mut t = vec![8u8,8,8,4,0,4];   
     let z =  search::byyel(&s,&t, 0);
     println!("{}",z);
