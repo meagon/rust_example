@@ -5,6 +5,12 @@
 #[phase(plugin, link)] extern crate log;
 
 
+
+
+
+pub mod search {
+
+
 use std::collections::HashMap;
 
 fn skip(t: &Vec<u8>, hash: & mut HashMap<u8,uint> ) {
@@ -62,18 +68,20 @@ pub fn byyel(s :&Vec<u8>, t: &Vec<u8>, start:uint) -> Vec<uint>{
                 i = i+1;
             }
        }
-        debug!("{}",s[i..n]);
-        debug!("{}",t)
+        debug!("source {}",s[i..n]);
+        debug!("dest   {}",t)
         debug!("i ={}   and n-m = {}", i, n-m);
    }
    //return None;
    return element_position;
 }
 
+}
+
 fn main(){
 
-    let mut s = vec![1u8,2,3,4,5,6,7,8,8,0,0,8,8,0];
-    let mut t = vec![8u8,8,0];   
-    let z =  byyel(&s,&t, 0);
+    let mut s = vec![1u8,2,3,4,5,6,7,8,8,8,4,0,4,0,8,8,0];
+    let mut t = vec![8u8,8,8,4,0,4];   
+    let z =  search::byyel(&s,&t, 0);
     println!("{}",z);
 }

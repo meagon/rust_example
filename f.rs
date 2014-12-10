@@ -6,10 +6,16 @@
 #[phase(plugin, link)] extern crate log;
 
 
+extern crate regex;
+#[phase(plugin)] extern crate regex_macros;
+
+
+
 use std::io::fs::PathExtensions;
 use std::io::File;
 use std::collections::HashMap;
 
+mod search;
 // ------------------------------77de85f2892a^M
 // Content-Disposition: form-data; name="blob"; filename="ff.rs"^M
 // Content-Type: application/octet-stream^M
@@ -23,36 +29,82 @@ enum   RStatus{
     Content,    // 'C'
     Boundary_end,  // boundary 的最后一个字符
     Nothing,
-    Speter,  // -  45u8
-
 }
 
-// CRLFCRLF  13u810u813u810u8
-
-fn indexOf(&this, element) -> Vec<uint> {
+fn indexOf( s: &Vec<u8>, t:&Vec<u8>) -> Vec<uint> {
     
+    let mut ret = search::search::byyel(s, t, 0u);
+    return ret;
 
-
-
-    return vec![8u].to_vec();
 
 }
-
 
 fn main(){
-
     let mut path = Path::new("./body");
-    let mut file = File::open(&path);
+    let mut file =  File::open(&path);
     let body = file.read_to_end().unwrap();
-    println!("{}", body);
+    // println!("{}", body);
     let mut it = body.iter();
     let mut  state : RStatus = RStatus::Nothing;
     let mut count = 0u;
     let mut LR : Vec<uint> = Vec::new();
     let mut z :Vec<u8> = Vec::new();
-    let mut zz = Vec::new();
     let mut CRLFCRLF : Vec<uint> = Vec::new();
     let mut cr_position  : Vec<uint> = Vec::new();
+    let re = regex!(r"------------------------------77de85f2892a");
+    let mut text = String::from_utf8_lossy(body.as_slice()).into_owned();
+    //let mut text = text.as_slice().into_string();
+    let mut previous :uint = 0;
+    let mut begin :uint;
+    let mut end :uint;
+    for pos in re.find_iter( text.as_slice() )  { //          text.as_slice()) {
+            println!("{}", pos);
+            let (begin, end) = pos;
+            let block = body[previous..begin];
+            println!("at block ###");
+            
+            println!("{}", String::from_utf8(block.to_vec()));
+
+            println!("at block ###");
+
+            previous = end;
+            //println!("{}", [begin..end])
+    }
+}
+
+
+
+
+
+
+/*
+    fn collectHeaders ( buf :&Vec<u8>) ->  Options<>{
+
+        let CRLFCRLF = "\r\n\r\n".as_slice().to_vec();
+        let pos = IndexOf(buf, &CRLFCRLF),
+        let (headerBytes, rest) = (buf[0..pos], buf[pos..]);
+        let header = String::from_utf8( headerBytes).unwrap().trim();
+        if header.starts_with("--") || header.is_empty() {
+            return None;
+        }
+        else {
+            let mut params = line.split(1, ":" );
+            let mut field =  params.next().unwrap();
+            let mut value = params.next().unwrap();
+        }
+        let left = reset.drop(CRLFCRLF.length);
+        return Some(header, left);
+    }
+    
+fn uselsee(){
+
+    // Option(buffer).map(b => b.splitAt(b.indexOfSlice(CRLFCRLF))).get
+
+
+    let mut boundary = "------------------------------77de85f2892a".to_string().as_bytes().to_vec();
+    let mut index = indexOf(&body,&boundary);
+    println!("index equal = {}",index);
+
     loop {
         match it.next(){
             Some(&x) => {
@@ -75,6 +127,7 @@ fn main(){
             None => {println!("the end"); break}
         }
     }
+    println!("{}  ",  cr_position);
     println!("LR   begin  :{}", LR);
     println!("=============================");
     for i in zz.iter(){
@@ -92,20 +145,6 @@ fn main(){
 
     println!("llllllllllllllllllllllllllllllllllllllll")
 
-/*      if (headerString.startsWith("--") || headerString.isEmpty) {
-        // It's the last part
-        None
-      } else {
-        val headers = headerString.lines.map { header =>
-          val key :: value = header.trim.split(":").toList
-          (key.trim.toLowerCase, value.mkString(":").trim)
-        }.toMap
-
-        val left = rest.drop(CRLFCRLF.length)
-        Some((headers, left))
-      }   
-    } 
-*/
 
 
     
@@ -208,3 +247,4 @@ fn main(){
 
     }
 }
+*/
