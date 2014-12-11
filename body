@@ -1,7 +1,3 @@
-Now listening on port 2000
-----------------------------77de85f2892a
-[User-Agent: curl/7.29.0, Host: 127.0.0.1:2000, Accept: */*, Content-Length: 1921, Expect: 100-continue, Content-Type: multipart/form-data; boundary=----------------------------77de85f2892a]
-body length = 1921
 ------------------------------77de85f2892a
 Content-Disposition: form-data; name="blob"; filename="ff.rs"
 Content-Type: application/octet-stream
