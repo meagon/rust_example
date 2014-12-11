@@ -1,20 +1,15 @@
 
+
 #![feature(slicing_syntax)]
 #![feature(phase)]
+
 #[phase(plugin, link)] extern crate log;
-
-
 extern crate regex;
-#[phase(plugin)] extern crate regex_macros;
 
 
-
-use std::io::fs::PathExtensions;
-use std::io::File;
-use std::collections::HashMap;
-use std::option;
 
 mod search;
+
 // ------------------------------77de85f2892a^M
 // Content-Disposition: form-data; name="blob"; filename="ff.rs"^M
 // Content-Type: application/octet-stream^M
@@ -30,37 +25,36 @@ enum   RStatus{
     Nothing,
 }
 
+mod parse {
 
-struct Input_obj {
+#![feature(phase)]
+#[phase(plugin, link)] extern crate log;
+
+extern crate regex;
+#[phase(plugin)] extern crate regex_macros;
+
+use search;
+
+use std::io::fs::PathExtensions;
+use std::io::File;
+use std::collections::HashMap;
+use std::option;
+
+
+
+
+pub struct Input_obj {
     header_map : HashMap<String,String>,
     ret: Vec<u8>,
 }
 
-fn IndexOf( s: &Vec<u8>, t:&Vec<u8>) -> Vec<uint> {
+fn index_of( s: &Vec<u8>, t:&Vec<u8>) -> Vec<uint> {
     let mut ret = search::search::byyel(s, t, 0u);
     return ret;
 }
 
-fn main(){
 
-
-    let mut path = Path::new("./body");
-
-    let mut file =  File::open(&path);
-    let body = file.read_to_end().unwrap();
-
-    let re = "------------------------------77de85f2892a".to_string().into_bytes().to_vec();
-    body_parse( &body ,&re);
-
-
-}
-
-
-fn  body_parse ( body : &Vec<u8>, boundary : &Vec<u8>) -> Vec<Option<Input_obj>> {
-    // let mut path = Path::new("./body");
-    // let mut file =  File::open(&path);
-    // let body = file.read_to_end().unwrap();
-    // println!("{}", body);
+pub fn body_parse ( body : &Vec<u8>, boundary : &Vec<u8>) -> Vec<Option<Input_obj>> {
     let mut it = body.iter();
     let mut boundary = boundary.clone();
     let mut boundary_str = String::from_utf8(boundary).unwrap();
@@ -86,19 +80,12 @@ fn  body_parse ( body : &Vec<u8>, boundary : &Vec<u8>) -> Vec<Option<Input_obj>>
 
             let mut head_info = collectHeaders( &block.to_vec() );
             headers.push(head_info);
-            //println!("{}", head_info.expect("None").ret);
             previous = end;
-            //println!("{}", [begin..end])
     }
 
     return headers;
     // let mut head_info = collectHeaders
 }
-
-
-
-
-
 
 fn collectHeaders ( buf :&Vec<u8>) ->  Option<Input_obj> {
         debug!("collect .. begin..");
@@ -107,7 +94,7 @@ fn collectHeaders ( buf :&Vec<u8>) ->  Option<Input_obj> {
         let CRLFCRLF = "\r\n\r\n".to_string().into_bytes();
         debug!("{}",CRLFCRLF);
         let CRLF = "\r\n";
-        let mut pos = IndexOf(buf, &CRLFCRLF);
+        let mut pos = index_of(buf, &CRLFCRLF);
         debug!("position at  ==={}", pos);
         if  pos.is_empty(){
             return None;
@@ -176,12 +163,21 @@ fn collectHeaders ( buf :&Vec<u8>) ->  Option<Input_obj> {
             left = reset.to_vec();
         }
 
-        //println!("{}", left);
-
     let input_instance = Input_obj {
         header_map: header_map,
         ret : left,
     };
     return Some(input_instance);
 }
-            
+}
+
+fn main(){
+
+    use std::io::File;
+
+    let mut path = Path::new("./body");
+    let mut file =  File::open(&path);
+    let body = file.read_to_end().unwrap();
+    let re = "------------------------------77de85f2892a".to_string().into_bytes().to_vec();
+    parse::body_parse( &body ,&re);
+}

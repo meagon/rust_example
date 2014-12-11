@@ -49,7 +49,7 @@ pub fn byyel(s :&Vec<u8>, t: &Vec<u8>, start:uint) -> Vec<uint>{
                 debug!("s is {}", s[i..i+m-1]);
                 debug!("t us {}", t[0..m-1]);
                 element_position.push(i);
-                i +=1;
+                i +=m;
             }
             else if ( hash.get( &s[i+m] ) == None) {
                 debug!("at nop 1");
