@@ -49,8 +49,7 @@ fn main(){
     let mut file =  File::open(&path);
     let body = file.read_to_end().unwrap();
 
-    let re = "------------------------------77de85f2892a".to_string().into_bytes().to_vec();
-    body_parse( &body ,&re);
+    body_parse( body );
 
 
 }
@@ -62,11 +61,15 @@ fn  body_parse ( body : &Vec<u8>, boundary : &Vec<u8>) -> Vec<Option<Input_obj>>
     // let body = file.read_to_end().unwrap();
     // println!("{}", body);
     let mut it = body.iter();
-    let mut boundary = boundary.clone();
-    let mut boundary_str = String::from_utf8(boundary).unwrap();
-    let mut boundary_str = boundary_str.as_slice(); 
-    let re = regex::Regex::new(boundary_str).unwrap(); //regex!( boundary_str );
+    // let mut count = 0u;
+    // let mut z :Vec<u8> = Vec::new();
+    // let mut CRLFCRLF : Vec<uint> = Vec::new();
+    // let mut cr_position  : Vec<uint> = Vec::new();
+    let mut boundary_str = String::from_utf8(boundary).unwrap().as_slice();
+    // let re = regex!(r"------------------------------77de85f2892a");
+    let re = regex!( boundary );
     let mut text = String::from_utf8_lossy(body.as_slice()).into_owned();
+    //let mut text = text.as_slice().into_string();
     let mut previous :uint = 0;
     let mut begin :uint;
     let mut end :uint;
