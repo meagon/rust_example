@@ -23,7 +23,7 @@ macro_rules! STRINGLIB_BLOOM(
 
 fn stringlib_bloom_add(mask :&uint, ch :&u8 ) -> uint{
         let z= *mask | 1u << ((*ch as uint & (32-1)));
-        println!("at  vloom add {}", z); 
+        println!("at  bloom add {}", z); 
         return z;
 }
 
