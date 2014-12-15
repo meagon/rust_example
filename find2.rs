@@ -1,6 +1,6 @@
 
 extern  crate collections;
-use  std::collections::VecMap;
+use std::collections::VecMap;
 use std::collections::HashMap;
 
 fn find_boyer(t: Vec<u8>,p :Vec<u8>, start: uint) -> Option<uint>{

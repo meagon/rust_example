@@ -47,14 +47,6 @@ fn main() {
         let server = server.clone();
 
         spawn(
-              // let content_s = String::from_utf8_lossy(content.as_slice()); //.into_bytes();
-              // debug!("{}", content_s);
-
-              // debug!("length = {}", content_s.len());
-              // hash::cal_md5(content_s);
-              //debug!("{}" ,content );
-              // let  content =  z.into_reader().read_to_string().unwrap();
-              //  debug!("{}", z.into_reader().read_to_string().unwrap());
               proc() {
               for mut rq in server.incoming_requests() {
                   let headers = rq.get_headers().clone();
@@ -75,7 +67,6 @@ fn main() {
                                                    "upload");
                               debug!("body length = {}" , rq . get_body_length
                                      (  ) . unwrap (  ))
-                              debug!("+++++++++++++++++++++++++++++++++++++++++++");
                           }
                       }
                       let response =

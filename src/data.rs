@@ -27,50 +27,34 @@ pub mod data {
     use std::io::MemReader;
     use std::io::BufferedStream;
     use std;
-    // pub fn write()  ->  IoResult<()> { //  Vec<u8>  {  //-> &'static [u8] {
-    pub fn write()  ->   Vec<u8>  {  //-> &'static [u8] {
+
+
+    /// 结构化数据
+    /// generate the serialized data bytes, try nano send it;
+    /// and store it in backend storage
+    /// if generate error, return None  ; 
+    
+    pub fn write( key: &str, data: Vec<u8>)  ->   Vec<u8>  {  //-> &'static [u8] {
         let mut message = MallocMessageBuilder::new_default();
         {
             let mut data_obj = message.init_root::<data_object::Builder>();
-            data_obj.set_key("hello");
-            data_obj.set_data("somebinary_data".to_string().as_bytes());
-            
-           // println!( "{}" , std::mem::size_of_val(& data_obj) );
+            data_obj.set_key( key );
+            data_obj.set_data( data.as_slice() );
         }
 
-        // return message;
-        //let mut buf = String::new(); 
         let mut buf :Vec<u8> = Vec::new();
-        // serialize::write_message(&mut buf, &message);
-        // println!("{}", buf.as_slice());
-        // println!("{}", String::from_utf8_lossy(buf.as_slice()) );
-        // serialize_packed::write_packed_message_unbuffered(&mut stdout(), &message)
-        //return buf;
-        // struct S;
-        // let mut stream = BufferedStream::new(buf);
         serialize_packed::write_packed_message_unbuffered(&mut buf, &message);
         return  buf;
-        //serialize::write_message(&mut buf, &message);
     }
 
     pub fn read_raw(input : capnp::message::MallocMessageBuilder){
     }
 
+
+    /* 解析数据并存储 will be useful for data storage nodes */
     pub fn read(input : Vec<u8> ) -> IoResult<()> {
-
-        // let mut in_data = input.container_as_bytes();
-        // let mut in_data = input.into_boxed_slice();
-        // println!("{}", input);
-        // let mut in_data = input.map(|i| i as uint);
         let mut in_data = MemReader::new(input);
-
-        // return vec!(10u);
-        // let mut in_data = input.as_bytes();
-        // let mut in_data :Box<[u8]> =  box in_data;
-        // println!("{}", in_data.into_boxed_slice());
-        // let mut c = Vec::new();
         let mut message_reader = try!(serialize_packed::new_reader_unbuffered(& mut in_data, ReaderOptions::new()));
-        
         //match message_reader {
          //   Ok(message) => {println!("{}", "ok");
                 //let data_obj = message.get_root_unchecked(1); // ::<data_object::Reader>();
@@ -79,48 +63,30 @@ pub mod data {
                 println!("hello");
                 println!("key is {}", k);
                 let mut z = data_obj.get_data();
-                //println!("{}",String::from_utf8_lossy(z));
             
-            //}
-            // Err(e) => {panic!("error");}
-        // }
         Ok(())
     }
-    /*
-       xx//println!("{}", message_reader);
-            Ok(message_reader) => {
-            // let message_reader = serialize::new_reader(in_data, ReaderOptions::new()).unwrap();
-            let data_obj  = message_reader.get_root::<data_object::Reader>();
-            let k = data_obj.get_key();
-            let file = data_obj.get_data();
-            println!("{}", k);
-            println!("{}", file);
-            }
-            Err(err) => { panic!(err);}
-        }
-    */ 
-   
 }
 
 
 pub struct Buffer<T> { buf: Vec<T> }
-
 pub type ObjectResult<T> = Result<T, ObjectStorageError>;  
-
 #[deriving(Show)]
 pub struct ObjectStorageError {
     pub code: int,
     message: String,
 }
 
+
+
 fn main() {
 
     let (tx, rx) = channel();
     let args = std::os::args();
-
     spawn ( proc() {
         loop { 
-            let mut z = data::write();
+            let mut data = "somebinary_data".to_string().into_bytes();
+            let mut z = data::write( "hello", data);
             tx.send ( z );
         }
     });
@@ -131,10 +97,3 @@ fn main() {
         }
     });
 }
-    /*
-    match args[1].as_slice() {
-        "write" => data::write(),
-        "read"  => data::read().unwrap(),
-        _ => { println!("eror") }
-    }
-    */

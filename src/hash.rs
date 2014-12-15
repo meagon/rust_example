@@ -3,7 +3,6 @@ extern crate "rust-crypto" as crypto;
 
 use crypto::md5::Md5 as Md5;
 use crypto::digest::Digest;
-use std::fmt::radix;
 
 use std::io::fs::PathExtensions;
 use std::str;
@@ -22,32 +21,8 @@ pub fn cal_md5(v: & [u8] ) -> Option<String> {
         left = left - take;
     }
 
-    let mut sh_ret: Vec<u8> = Vec::from_elem(16, 0u8);
-    let mut t2 = sh_ret.as_mut_slice();
-    let mut v :Vec<String> = Vec::new();
-
-    let mut zz = sh.result_str();
-    println!("zz   result is {}", zz);
-    sh.result(t2);
-    println!(" out is {}", t2);
-    sh.reset();
-
-    let mut v = Vec::new();
-    for &i in t2.iter() {
-        let mut s ; 
-        let mut hex :  std::fmt::RadixFmt<u8, std::fmt::Radix>; //std::fmt::Radix;
-        if i > 15 {
-            hex = std::fmt::radix(i, 16);
-            s = format!("{:2}" , hex);
-        } else {
-            hex = std::fmt::radix(i, 16);
-            s = format!("0{}" , hex);
-        }
-        v.push(s);
-    }
-    let mut v = v.concat();
-    println!("{}",v);
-    return Some(v);
+    let mut ret = sh.result_str();
+    return Some(ret);
 }
 
 
