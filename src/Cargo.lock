@@ -1,0 +1,30 @@
+[root]
+name = "data"
+version = "0.0.2"
+dependencies = [
+ "capnp 0.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "capnp-rpc 0.0.3",
+ "capnpc 0.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "capnp"
+version = "0.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+
+[[package]]
+name = "capnp-rpc"
+version = "0.0.3"
+dependencies = [
+ "capnp 0.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
+ "capnpc 0.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "capnpc"
+version = "0.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "capnp 0.0.5 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+

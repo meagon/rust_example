@@ -1,0 +1,2 @@
+/git/capnp-rpc-rust/examples/calculator/src/target/deps/libcapnp-40226d439cdc6e5c.rlib: src/capnp/lib.rs src/capnp/any_pointer.rs src/capnp/arena.rs src/capnp/blob.rs src/capnp/capability.rs src/capnp/common.rs src/capnp/endian.rs src/capnp/io.rs src/capnp/layout.rs src/capnp/list.rs src/capnp/mask.rs src/capnp/message.rs src/capnp/serialize.rs src/capnp/serialize_packed.rs src/capnp/traits.rs src/capnp/layout_test.rs src/capnp/serialize_packed_test.rs
+

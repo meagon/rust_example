@@ -1,0 +1,23 @@
+[package]
+
+name = "data"
+version = "0.0.2"
+authors = [ "lambda"  ]
+build = "build.rs"
+
+[[lib]]
+name = "data"
+path = "ddata.rs"
+
+
+[build-dependencies]
+capnpc = "0.0.5"
+
+
+[dependencies]
+capnp = "0.0.5"
+
+[dependencies.capnp-rpc]
+path = "../../.."
+
+

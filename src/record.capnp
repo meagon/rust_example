@@ -5,8 +5,8 @@ struct  RecordInfo{
     ops @1  :Text;  #  INSERT ,UPDATE, DELETE;
     stmt @2 :Text;  #  query sequence
 }
-
 struct  Records {
-    name @0 :List( RecordInfo );  # for lists of record
+    name @0 :List( RecordInfo );  # for lists
 }
+
 

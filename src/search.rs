@@ -6,10 +6,7 @@
 
 
 
-
-
 pub mod search {
-
 
 use std::collections::HashMap;
 
@@ -22,12 +19,12 @@ fn skip(t: &Vec<u8>, hash: & mut HashMap<u8,uint> ) {
         hash.insert(*i as u8, t.len() - pos as uint -1);
         pos +=1;
     }
-    for i in hash.iter(){
-        debug!("{}",i);
-    }
 }
 
 
+/* 
+ * search a sub_vec position in vec;
+ */
 pub fn byyel(s :&Vec<u8>, t: &Vec<u8>, start:uint) -> Vec<uint>{
 
     let n = s.len();
@@ -41,45 +38,39 @@ pub fn byyel(s :&Vec<u8>, t: &Vec<u8>, start:uint) -> Vec<uint>{
     skip(t, & mut hash);
     let mut element_position : Vec<uint> = Vec::new();
     while ( i < n-m ){
-        debug!("i = {}",i);
-        debug!("at while loop..")
         if (s[i+m-1] == t[m-1]){
             if (s[i..i+m-1] == t[0..m-1]) {
-                //return Some(i);
-                debug!("s is {}", s[i..i+m-1]);
-                debug!("t us {}", t[0..m-1]);
                 element_position.push(i);
                 i +=m;
             }
             else if ( hash.get( &s[i+m] ) == None) {
-                debug!("at nop 1");
-                debug!("move {}", m-1)
+                // debug!("at nop 1");
+                // debug!("move {}", m-1)
                 i = i+m -1;
             }
             else {
-                debug!("at else one ");
-                let mut element =  s[i+m];  //t.get(s[i+m] as uint).unwrap();
+                // debug!("at else one ");
+                let mut element =  s[i+m];  
                 let  skip= *hash.get( &element ).unwrap() as uint;
                 i = i+ skip + 1;
-
-                debug!("move {}",skip);
+                // debug!("move {}",skip);
             }
        }
        else{
-            debug!("...at else..and  s[i+m] = {}", s[i+m]);
-            debug!("t get {}  {}",  s[i+m] , t.get(s[i+m] as uint) );
+            // debug!("...at else..and  s[i+m] = {}", s[i+m]);
+            // debug!("t get {}  {}",  s[i+m] , t.get(s[i+m] as uint) );
             if ( hash.get(& s[i+m]) == None ){
-                debug!("at nop 2");
+                // debug!("at nop 2");
                 i = i +m +1;
-                debug!("move {}", m+1)
+                //debug!("move {}", m+1)
             }
             else {
                 i = i+1;
             }
        }
-        debug!("source {}",s[i..n]);
-        debug!("dest   {}",t)
-        debug!("i ={}   and n-m = {}", i, n-m);
+        // debug!("source {}",s[i..n]);
+        // debug!("dest   {}",t)
+        // debug!("i ={}   and n-m = {}", i, n-m);
    }
    //return None;
    return element_position;

@@ -2,19 +2,23 @@
 
 #![feature(slicing_syntax)]
 #![feature(phase)]
+#![feature(phase)]
+#[phase(plugin, link)]
 
 
 extern crate tiny_http;
-extern crate hash;
+// extern crate hash;
+
 extern crate log;
 
 use std::os;
 use std::sync::Arc;
+use std::sync::atomic::AtomicOption;
 use std::ascii::AsciiStr;
+use std::rc::Rc;
 
-use search;
-use parse;
-
+mod search;
+mod http_handle;
 
 fn get_boundary(headers: &[tiny_http::Header]) -> Vec<u8> {
     let mut multipart: Vec<u8> = vec!();
@@ -30,6 +34,7 @@ fn get_boundary(headers: &[tiny_http::Header]) -> Vec<u8> {
     let mut elems = input.splitn(1, ';');
     let value = elems.next();
     println!("boundary is {}" , value.unwrap() [ 10 .. ]);
+    // 神奇的数字,为神马是10 呢?  "boundary :".len() = 10;
     return value.unwrap()[10..].to_string().into_bytes(); 
 }
 
@@ -37,53 +42,23 @@ fn get_boundary(headers: &[tiny_http::Header]) -> Vec<u8> {
 fn main() {
     let server =
         Arc::new(tiny_http::ServerBuilder::new().with_port(2000).build().unwrap());
-    debug!("Now listening on port 2000");
+        //Arc::new(tiny_http::ServerBuilder::new().with_port(2000).build().unwrap());
+    println!("Now listening on port 3000");
 
     for _ in range(0, os::num_cpus()) {
         let server = server.clone();
-
-        spawn(
-              proc() {
+        spawn(move ||
+              {
               for mut rq in server.incoming_requests() {
-                  match rq.get_method().clone().into_string() {
+                  match rq.get_method().clone().into_string().as_slice() {
                       // will add "head" method to query file if exists;
-                    "GET".to_string()  =>  { http_handle::get(rq);  },
-                    "POST".to_string() =>  { http_handle::post(rq); },
-                    "PUT".to_string()  =>  { http_handle::put(rq);  },
-                    _                  =>  { http_handle::error("not support method");},
+                    "GET"  =>  { http_handle::get(&rq);  },
+                    "POST" =>  { http_handle::post(&rq); },
+                    "PUT"  =>  { http_handle::put(&rq);  },
+                    _                  =>  { http_handle::error(&rq ,"not support method");},
                   }
               }
-           });
-
+        });
     }
 }
 
-
-                  let headers = rq.get_headers().clone();
-                  let boundary = get_boundary(headers);
-                  println!("{}" , headers);
-
-
-
-                  if rq.get_method().clone().into_string() ==
-                         "GET".to_string() {
-                      debug!("{}" , rq . get_url (  ));
-                      let response =
-                          tiny_http::Response::from_string("req GET hello world".to_string());
-                      rq.respond(response);
-                  } else if rq.get_method().clone().into_string() ==
-                                "POST".to_string() {
-                      {
-                          let content = rq.as_reader().read_to_end().unwrap();
-                          {
-                              parse::parse::upload(&content, &boundary, "upload");
-                              debug!("body length = {}" , rq . get_body_length().unwrap())
-                          }
-                      }
-                      let response =
-                          tiny_http::Response::from_string("ok read".to_string());
-                      rq.respond(response);
-                  } else { }
-              } })
-    }
-}

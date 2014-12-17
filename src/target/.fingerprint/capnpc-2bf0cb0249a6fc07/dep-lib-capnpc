@@ -1,0 +1,2 @@
+/git/capnp-rpc-rust/examples/calculator/src/target/deps/libcapnpc-2bf0cb0249a6fc07.rlib: src/lib.rs src/schema_capnp.rs src/codegen.rs
+
