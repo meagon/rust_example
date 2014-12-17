@@ -5,11 +5,25 @@ extern crate capnp;
 extern crate collections;
 
 // use std::collections::String;
-
+// 定义传输中的数据
+//
 use capnp::serialize_packed::{PackedOutputStream, PackedInputStream};
 
 pub mod data_capnp{
     include!(concat!(env!("OUT_DIR"),"/data_capnp.rs"))
+}
+
+public struct Store{
+    key: String,
+    value: Vec<u8>,
+}
+
+pub struct Buffer<T> { buf: Vec<T> }
+pub type ObjectResult<T> = Result<T, ObjectStorageError>;  
+#[deriving(Show)]
+pub struct ObjectStorageError {
+        pub code: int,
+        message: String,
 }
 
 
@@ -26,18 +40,17 @@ pub mod data {
     use std::io::{BufferedWriter, File};
     use std::io::MemReader;
     use std::io::BufferedStream;
-    use std;
-
 
     /// 结构化数据
     /// generate the serialized data bytes, try nano send it;
     /// and store it in backend storage
     /// if generate error, return None  ; 
     
-    pub fn write( key: &str, data: Vec<u8>)  ->   Vec<u8>  {  //-> &'static [u8] {
+    pub fn pack( key: &str, data: Vec<u8>)  ->   Vec<u8>  {  //-> &'static [u8] {
         let mut message = MallocMessageBuilder::new_default();
         {
             let mut data_obj = message.init_root::<data_object::Builder>();
+            let mut key = key.into_string();
             data_obj.set_key( key );
             data_obj.set_data( data.as_slice() );
         }
@@ -47,36 +60,20 @@ pub mod data {
         return  buf;
     }
 
-    pub fn read_raw(input : capnp::message::MallocMessageBuilder){
-    }
-
-
     /* 解析数据并存储 will be useful for data storage nodes */
-    pub fn read(input : Vec<u8> ) -> IoResult<()> {
+    pub fn unpack(input : Vec<u8> ) -> Option<Store> {
         let mut in_data = MemReader::new(input);
-        let mut message_reader = try!(serialize_packed::new_reader_unbuffered(& mut in_data, ReaderOptions::new()));
-        //match message_reader {
-         //   Ok(message) => {println!("{}", "ok");
-                //let data_obj = message.get_root_unchecked(1); // ::<data_object::Reader>();
-                let data_obj = message_reader.get_root::<data_object::Reader>();
-                let mut k = data_obj.get_key();
-                println!("hello");
-                println!("key is {}", k);
-                let mut z = data_obj.get_data();
-            
-        Ok(())
+        let mut message_reader = serialize_packed::new_reader_unbuffered(& mut in_data, ReaderOptions::new());
+        match message_reader {
+            Ok(message) = > {
+                let data_obj = message.get_root::<data_object::Reader>();
+                let k = data_obj.get_key();
+                let v = data_obj.get_data();
+                return Some(Store{key: k, value: v });
+            },
+            Err(e) => {return None},
+        };
     }
-}
-
-
-pub struct Buffer<T> { buf: Vec<T> }
-pub type ObjectResult<T> = Result<T, ObjectStorageError>;  
-#[deriving(Show)]
-pub struct ObjectStorageError {
-    pub code: int,
-    message: String,
-}
-
 
 
 fn main() {

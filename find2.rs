@@ -1,5 +1,4 @@
-
-extern  crate collections;
+extern crate collections;
 use std::collections::VecMap;
 use std::collections::HashMap;
 
@@ -60,5 +59,4 @@ fn main(){
     let z = find_boyer(t,p,5u);
     println!("{}", z);
 }
-
 

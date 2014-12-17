@@ -1,6 +1,8 @@
 
+
 #![feature(slicing_syntax)]
 #![feature(phase)]
+
 
 extern crate tiny_http;
 extern crate hash;
@@ -10,20 +12,15 @@ use std::os;
 use std::sync::Arc;
 use std::ascii::AsciiStr;
 
-
 use search;
 use parse;
 
 
 fn get_boundary(headers: &[tiny_http::Header]) -> Vec<u8> {
-    //for i in headers.iter() {
     let mut multipart: Vec<u8> = vec!();
     for i in headers.iter() {
-        // if i.field.as_byte() == "Content-Type".as_byte() {
         if format!("{}" , i . field) == "Content-Type".to_string() {
-            // let mut multipart = i.value.iter().map(|c| *c.into_bytes()).collect(); //format!("{}",i.value);
             for j in i.value.iter() {
-                // debug!( "{}", *j.as_byte());
                 multipart.push(j.as_byte());
             }
         }
@@ -32,10 +29,9 @@ fn get_boundary(headers: &[tiny_http::Header]) -> Vec<u8> {
     let input = String::from_utf8_lossy(multipart.as_slice());
     let mut elems = input.splitn(1, ';');
     let value = elems.next();
-    println!("boundary is {}" , value.unwrap (  ) [ 10 .. ]);
-    return value.unwrap()[10..].to_string().into_bytes(); //to_vec();
+    println!("boundary is {}" , value.unwrap() [ 10 .. ]);
+    return value.unwrap()[10..].to_string().into_bytes(); 
 }
-
 
 
 fn main() {
@@ -49,9 +45,26 @@ fn main() {
         spawn(
               proc() {
               for mut rq in server.incoming_requests() {
+                  match rq.get_method().clone().into_string() {
+                      // will add "head" method to query file if exists;
+                    "GET".to_string()  =>  { http_handle::get(rq);  },
+                    "POST".to_string() =>  { http_handle::post(rq); },
+                    "PUT".to_string()  =>  { http_handle::put(rq);  },
+                    _                  =>  { http_handle::error("not support method");},
+                  }
+              }
+           });
+
+    }
+}
+
+
                   let headers = rq.get_headers().clone();
                   let boundary = get_boundary(headers);
                   println!("{}" , headers);
+
+
+
                   if rq.get_method().clone().into_string() ==
                          "GET".to_string() {
                       debug!("{}" , rq . get_url (  ));
@@ -63,10 +76,8 @@ fn main() {
                       {
                           let content = rq.as_reader().read_to_end().unwrap();
                           {
-                              parse::parse::upload(&content, &boundary,
-                                                   "upload");
-                              debug!("body length = {}" , rq . get_body_length
-                                     (  ) . unwrap (  ))
+                              parse::parse::upload(&content, &boundary, "upload");
+                              debug!("body length = {}" , rq . get_body_length().unwrap())
                           }
                       }
                       let response =

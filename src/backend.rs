@@ -34,7 +34,7 @@ impl Storage {
     }
 
     pub fn set_kv(k: &[u8], v:&[u8]) -> DBResult<Option<String>> {
-        let ret = self.db.put(key,v);
+        let ret = self.db.put(k,v);
         match ret {
             Ok(o) => { return Ok(("ok".to_string())) },
             _     => { panic!("error occur at store key: {}",
